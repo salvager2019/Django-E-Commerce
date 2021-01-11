@@ -38,7 +38,7 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
-    ##method to create a fake table field in read only model
+    ##method to create a fake table field in read only model. this is add github
     def image_tag(self):
         return mark_safe('<img src="{}" height="50"'.format(self.image.url))
     
