@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 class Category(models.Model):
@@ -30,7 +31,7 @@ class Product(models.Model):
     price =models.FloatField()
     amount = models.IntegerField()
     minamount = models.IntegerField()
-    detail=models.TextField()
+    detail=RichTextUploadingField()
     slug = models.SlugField()
     status = models.CharField(max_length=10,choices=STATUS)
     create_at = models.DateTimeField(auto_now_add=True)
