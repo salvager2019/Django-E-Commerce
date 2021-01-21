@@ -3,6 +3,7 @@ from django.utils.safestring import mark_safe
 from ckeditor_uploader.fields import RichTextUploadingField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
+from django.urls import reverse
 
 # Create your models here.
 class Category(MPTTModel):
@@ -17,7 +18,7 @@ class Category(MPTTModel):
     description=models.CharField(max_length=255)
     img=models.ImageField(blank=True,upload_to='images/')
     status=models.CharField(max_length=10,choices=STATUS)
-    slug=models.SlugField()
+    slug=models.SlugField(null=False,unique=True)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
 
@@ -26,6 +27,18 @@ class Category(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by =['title']
+    
+    def get_absolute_url(self):
+        return reverse("category_detail", kwargs={"slug": self.slug})
+    
+
+    def __str__(self):
+        full_path = [self.title]
+        k = self.parent
+        while k is not None:
+            full_path.append(k.title)
+            k = k.parent
+        return '/'.join(full_path[::-1])
 
 
 class Product(models.Model):
@@ -40,7 +53,7 @@ class Product(models.Model):
     amount = models.IntegerField()
     minamount = models.IntegerField()
     detail=RichTextUploadingField()
-    slug = models.SlugField()
+    slug = models.SlugField(null=False, unique=True)
     status = models.CharField(max_length=10,choices=STATUS)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -54,6 +67,9 @@ class Product(models.Model):
         return mark_safe('<img src="{}" height="50"/>'.format(self.image.url))
     
     image_tag.short_description="Image"
+
+    def get_absolute_url(self):
+        return reverse("category_detail", kwargs={"slug": self.slug})
 
 
 class Images(models.Model):

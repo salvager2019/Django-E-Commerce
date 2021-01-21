@@ -2,13 +2,15 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from home.models import Setting, ContactForm, ContactMessage
 from django.contrib import messages
+from product.models import Category, Product
 
 
 # Create your views here.
 def index(request):
     setting = Setting.objects.get(pk=1)
+    category = Category.objects.all()
     page="home"
-    context = {'setting': setting,'page':page}
+    context = {'setting': setting, 'page': page, 'category': category}
     return render(request, 'index.html', context)
 
 def aboutus(request):
@@ -32,6 +34,11 @@ def contactus(request):
             messages.success(request, "Your message has ben sent. Thank you for your message.")
             return HttpResponseRedirect('/contact')
     
+
+def category_products(request,id,slug):
+    products = Product.objects.filter(category_id=id)
+    return HttpResponse(products)
+
     
     setting = Setting.objects.get(pk=1)
     form=ContactForm
